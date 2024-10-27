@@ -1,52 +1,52 @@
 {% extends "base.html" %}
 {% block content %}
-    <main class="container mt-4">
-        <h2 class="mb-4">Productos Destacados</h2>
-        <div class="row">
-            <div class="col-md-3 mb-4">
-                <div class="card product-card">
-                    <img src="{{joya.image}}" class="card-img-top" alt="Producto 1">
-                    <div class="card-body">
-                        <h5 class="card-title">{{joya.title}}</h5>
-                        <p class="card-text">{{joya.description}}</p>
-                        <p class="card-text">{{joya.price}}</p>
-                        <a href="#" class="btn btn-primary">Ver detalles</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 mb-4">
-                <div class="card product-card">
-                    <img src="{{electronica.image}}" class="card-img-top" alt="Producto 2">
-                    <div class="card-body">
-                        <h5 class="card-title">{{electronica.title}}</h5>
-                        <p class="card-text">{{electronica.description}}</p>
-                        <p class="card-text">{{electronica.price}}</p>
-                        <a href="#" class="btn btn-primary">Ver detalles</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 mb-4">
-                <div class="card product-card">
-                    <img src="{{ropaMujer.image}}" class="card-img-top" alt="Producto 3">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ropaMujer.title}}</h5>
-                        <p class="card-text">{{ropaMujer.description}}</p>
-                        <p class="card-text">{{ropaMujer.price}}</p>
-                        <a href="#" class="btn btn-primary">Ver detalles</a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3 mb-4">
-                <div class="card product-card">
-                    <img src="{{ropaHombre.image}}" class="card-img-top" alt="Producto 4">
-                    <div class="card-body">
-                        <h5 class="card-title">{{ropaHombre.title}}</h5>
-                        <p class="card-text">{{ropaHombre.description}}</p>
-                        <p class="card-text">{{ropaHombre.price}}€</p>
-                        <a href="#" class="btn btn-primary">Ver detalles</a>
-                    </div>
+<main class="container mt-4">
+    <h2 class="mb-4">Productos Destacados</h2>
+    <div class="row">
+        <div class="col-md-3 mb-4">
+            <div class="card product-card">
+                <img src="{{joya.image}}" class="card-img-top" alt="Producto 1">
+                <div class="card-body">
+                    <h5 class="card-title">{{joya.title}}</h5>
+                    <p class="card-text">{{joya.description}}</p>
+                    <p class="card-text">{{joya.price}}€</p>
+                    <a href="/producto/{{ joya._id }}" class="btn btn-primary">Ver detalles</a>
                 </div>
             </div>
         </div>
-    </main>
+        <div class="col-md-3 mb-4">
+            <div class="card product-card">
+                <img src="{{electronica.image}}" class="card-img-top" alt="Producto 2">
+                <div class="card-body">
+                    <h5 class="card-title">{{electronica.title}}</h5>
+                    <p class="card-text">{{electronica.description}}</p>
+                    <p class="card-text">{{electronica.price}}€</p>
+                    <a href="/producto/{{ electronica._id }}" class="btn btn-primary">Ver detalles</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card product-card">
+                <img src="{{ropaMujer.image}}" class="card-img-top" alt="Producto 3">
+                <div class="card-body">
+                    <h5 class="card-title">{{ropaMujer.title}}</h5>
+                    <p class="card-text">{{ropaMujer.description}}</p>
+                    <p class="card-text">{{ropaMujer.price}}€</p>
+                    <a href="/producto/{{ ropaMujer._id }}" class="btn btn-primary">Ver detalles</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 mb-4">
+            <div class="card product-card">
+                <img src="{{ropaHombre.image}}" class="card-img-top" alt="Producto 4">
+                <div class="card-body">
+                    <h5 class="card-title">{{ropaHombre.title}}</h5>
+                    <p class="card-text">{{ropaHombre.description}}</p>
+                    <p class="card-text">{{ropaHombre.price}}€</p>
+                    <a href="/producto/{{ ropaHombre._id }}" class="btn btn-primary">Ver detalles</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
 {% endblock %}

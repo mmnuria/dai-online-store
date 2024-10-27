@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<main class="container mt-4">
+    <h1>Tu Carrito</h1>
+    
+    <!-- Verifica si el carrito tiene elementos -->
+    {% if carrito.length == 0 %}
+        <p>Tu carrito está vacío.</p>
+    {% else %}
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Producto</th>
+                    <th>Precio</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- Recorre cada elemento del carrito -->
+                {% for item in carrito %}
+                    <tr>
+                        <td>{{ item.title }}</td>
+                        <td>{{ item.price }}€</td>
+                        <td>
+                            <!-- Formulario para eliminar el producto del carrito -->
+                            <form action="/eliminar-del-carrito" method="POST" style="display: inline;">
+                                <input type="hidden" name="productoId" value="{{ item._id }}">
+                                <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>Total</th>
+                    <td colspan="2">{{ total }}€</td>
+                </tr>
+            </tfoot>
+            
+        </table>
+    {% endif %}
+
+    <!-- Botón para volver a la tienda -->
+    <a href="/" class="btn btn-primary">Seguir comprando</a>
+</main>
+{% endblock %}

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<main class="container mt-4">
+    <div class="row">
+        <div class="col-md-6">
+            <img src="{{ producto.image }}" class="img-fluid" alt="productos">
+        </div>
+        <div class="col-md-6">
+            <h1>{{ producto.title }}</h1>
+            <p>{{ producto.description }}</p>
+            <p class="lead">{{ producto.price }}€</p>
+            <form action="/anadir-al-carrito" method="POST">
+                <input type="hidden" name="productoId" value="{{ producto._id }}">
+                <button type="submit" class="btn btn-primary btn-lg">Añadir al carrito</button>
+            </form>
+        </div>
+    </div>
+    
+</main>
+{% endblock %}

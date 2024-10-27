@@ -1,5 +1,6 @@
 import express   from "express"
 import nunjucks  from "nunjucks"
+import session from "express-session"
       
 import connectDB from "./model/db.js"
 connectDB()
@@ -17,6 +18,22 @@ nunjucks.configure('views', {         // directorio 'views' para las plantillas 
 app.set('view engine', 'html')
 
 app.use(express.static('public'))     // directorio public para archivos
+app.use(express.urlencoded({ extended: true }));
+
+app.use(session({
+	secret: 'my-secret',      // a secret string used to sign the session ID cookie
+	resave: false,            // don't save session if unmodified
+	saveUninitialized: false  // don't create session until something stored
+}))
+
+// Middleware para inicializar el carrito si no existe
+app.use((req, res, next) => {
+	console.log(req.session);
+    if (!req.session.carrito) {
+        req.session.carrito = [];
+    }
+    next();
+});
 
 // test para el servidor
 app.get("/hola", (req, res) => {
