@@ -28,7 +28,6 @@ router.get('/buscar', async (req, res) => {
               { description: { $regex: busqueda, $options: 'i' } }
           ]
       });
-      console.log(productos);
       res.render('busqueda.html', { productos, busqueda });
   } catch (error) {
       console.error('Error en la búsqueda:', error);
@@ -47,26 +46,44 @@ router.get('/producto/:id', async (req, res) => {
   }
 });
 
+// Ruta para obtener productos por categoría
+router.get('/categoria/:nombre', async (req, res) => {
+  try {
+      const nombreCategoria = req.params.nombre;
+      const productos = await Productos.find({ category: nombreCategoria });
+      res.render('categoria.html', { productos, nombreCategoria });
+  } catch (error) {
+      console.error('Error al obtener productos por categoría:', error);
+      res.status(500).send('Error del servidor');
+  }
+});
+
 // Ruta para añadir al carrito
 router.post('/anadir-al-carrito', async (req, res) => {
   try {
+
+      // Busca el producto por ID
       const producto = await Productos.findById(req.body.productoId);
       if (!producto) {
           return res.status(404).send('Producto no encontrado');
       }
 
+      // Añade el producto al carrito en la sesión
       req.session.carrito.push({
           id: producto._id,
-          nombre: producto.title,
-          precio: producto.price,
+          title: producto.title, // Cambiado a title en lugar de nombre para que coincida con la clave en la vista
+          price: producto.price,
           image: producto.image
       });
-      res.redirect('carrito.html'); // Redirige a la vista del carrito
+
+      // Redirige a la página del carrito después de añadir el producto
+      res.redirect('/carrito'); 
   } catch (error) {
       console.error('Error al añadir al carrito:', error);
       res.status(500).send('Error del servidor');
   }
 });
+
 
 
 router.get('/carrito', (req, res) => {

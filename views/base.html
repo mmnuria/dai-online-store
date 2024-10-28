@@ -32,33 +32,35 @@
                             Categorías
                         </a>
                         <ul class="dropdown-menu">
-                            <li><a class="dropdown-item" href="#">Joyas</a></li>
-                            <li><a class="dropdown-item" href="#">Electrónica</a></li>
-                            <li><a class="dropdown-item" href="#">Ropa Mujer</a></li>
-                            <li><a class="dropdown-item" href="#">Ropa Hombre</a></li>
+                            <li><a class="dropdown-item" href="/categoria/jewelery">Joyas</a></li>
+                            <li><a class="dropdown-item" href="/categoria/electronics">Electrónica</a></li>
+                            <li><a class="dropdown-item" href="/categoria/women's clothing">Ropa Mujer</a></li>
+                            <li><a class="dropdown-item" href="/categoria/men's clothing">Ropa Hombre</a></li>
                         </ul>
                     </li>
                 </ul>
+                <!-- Formulario de búsqueda -->
                 <form class="d-flex me-2" action="/buscar" method="GET">
-                    <input class="form-control me-2" type="search" name="q" placeholder="Buscar artículos"
-                        aria-label="Search">
+                    <input class="form-control me-2" type="search" name="q" placeholder="Buscar artículos" aria-label="Search">
                     <button class="btn btn-outline-light" type="submit">Buscar</button>
                 </form>
-                <form class="d-flex">
-                        {% if carrito.length == 0 %}
-                            <button class="btn btn-outline-light" type="submit" disabled="true">
-                                <i class="bi bi-cart"></i>
-                            </button>
-                        {% else %}
-                        <a href="/carrito" class="btn btn-outline-light me-2">
-                            <button class="btn btn-outline-light" type="submit" disabled="false" >
-                                <i class="bi bi-cart"></i>
-                            </button>
-                        </a>
-                        {% endif %}
-                    <a href="/logout" class="btn btn-outline-light">
-                        <i class="bi bi-box-arrow-right"></i>
+
+                <!-- Icono de carrito -->
+                {% if carrito and carrito|length > 0 %}
+                    <a href="/carrito" class="btn btn-outline-light me-2">
+                        <i class="bi bi-cart"></i>
                     </a>
+                {% else %}
+                    <!-- Carrito deshabilitado si está vacío -->
+                    <button class="btn btn-outline-light disabled" type="button">
+                        <i class="bi bi-cart"></i>
+                    </button>
+                {% endif %}
+
+                <!-- Botón de logout -->
+                <a href="/logout" class="btn btn-outline-light">
+                    <i class="bi bi-box-arrow-right"></i>
+                </a>
                 </form>
             </div>
         </div>
