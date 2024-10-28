@@ -28,6 +28,11 @@ router.get('/buscar', async (req, res) => {
               { description: { $regex: busqueda, $options: 'i' } }
           ]
       });
+
+      // Verificar si el campo de búsqueda está vacío
+      if (!busqueda || busqueda.trim() === "") {
+        return res.render('busqueda.html', { productos: [], busqueda: "", mensaje: "Introduce un término para buscar." });
+    }
       res.render('busqueda.html', { productos, busqueda });
   } catch (error) {
       console.error('Error en la búsqueda:', error);
@@ -61,22 +66,23 @@ router.get('/categoria/:nombre', async (req, res) => {
 // Ruta para añadir al carrito
 router.post('/anadir-al-carrito', async (req, res) => {
   try {
-
-      // Busca el producto por ID
       const producto = await Productos.findById(req.body.productoId);
       if (!producto) {
           return res.status(404).send('Producto no encontrado');
       }
 
-      // Añade el producto al carrito en la sesión
+      // Carrito existe en la sesión
+      if (!req.session.carrito) {
+        req.session.carrito = [];
+      }
+
       req.session.carrito.push({
           id: producto._id,
-          title: producto.title, // Cambiado a title en lugar de nombre para que coincida con la clave en la vista
+          title: producto.title,
           price: producto.price,
           image: producto.image
       });
 
-      // Redirige a la página del carrito después de añadir el producto
       res.redirect('/carrito'); 
   } catch (error) {
       console.error('Error al añadir al carrito:', error);
@@ -84,11 +90,9 @@ router.post('/anadir-al-carrito', async (req, res) => {
   }
 });
 
-
-
 router.get('/carrito', (req, res) => {
   const carrito = req.session.carrito || [];
-  // Calcular el total del carrito
+  
   const total = carrito.reduce((acc, item) => acc + item.price, 0).toFixed(2);
   res.render('carrito.html', { carrito, total });
 });
@@ -100,7 +104,20 @@ router.post('/eliminar-del-carrito', (req, res) => {
       req.session.carrito = req.session.carrito.filter(item => item.id !== productoId);
   }
 
-  res.redirect('/carrito'); // Redirige de vuelta al carrito
+  res.redirect('/carrito');
+});
+
+// Ruta para logout
+router.get('/logout', (req, res) => {
+  // Destruye la sesión, eliminando todos los datos, incluido el carrito
+  req.session.destroy((err) => {
+    if (err) {
+      console.error("Error al cerrar sesión:", err);
+      return res.status(500).send("Error al cerrar sesión");
+    }
+    
+    res.redirect('/home');
+  });
 });
 
 export default router

@@ -35,6 +35,12 @@ app.use((req, res, next) => {
     next();
 });
 
+// Middleware para hacer que el carrito esté disponible en todas las vistas
+app.use((req, res, next) => {
+    res.locals.carrito = req.session.carrito || [];
+    next();
+});
+
 // test para el servidor
 app.get("/hola", (req, res) => {
   res.send('Hola desde el servidor');

@@ -1,21 +1,26 @@
 {% extends "base.html" %}
 {% block content %}
 <main class="container mt-4">
-    <!-- Título de la búsqueda -->
+
+     <!-- Mostrar mensaje si no se ha encontrado ningún producto -->
+     {% if mensaje %}
+     <div class="alert alert-warning">{{ mensaje }}</div>
+     {% else %}
+     
+     <!-- Título de la búsqueda -->
     <h2>Resultados de búsqueda para: "<strong>{{ busqueda }}</strong>"</h2>
-    
     <!-- Contenedor de resultados -->
     <div id="results-container" class="row mt-4">
         {% if productos.length === 0 %}
             <p class="text-muted">No se encontraron productos.</p>
         {% else %}
             {% for producto in productos %}
-                <div class="col-md-3 mb-4">
-                    <div class="card product-card h-100">
+                <div class="col-md-3 mb-4 d-flex">
+                    <div class="card product-card h-100 w-100">
                         <img src="{{ producto.image }}" class="card-img-top" alt="{{ producto.title }}">
-                        <div class="card-body">
+                        <div class="card-body d-flex flex-column justify-content-between">
                             <h5 class="card-title">{{ producto.title }}</h5>
-                            <p class="card-text">{{ producto.description }}</p>
+                            <p class="card-text text-truncate" style="max-width: 250px;">{{ producto.description }}</p>
                             <p class="card-text font-weight-bold">{{ producto.price }}€</p>
                             <a href="/producto/{{ producto._id }}" class="btn btn-primary">Ver detalles</a>
                         </div>
@@ -23,6 +28,7 @@
                 </div>
             {% endfor %}
         {% endif %}
+    {% endif %}
     </div>
 
     <!-- Botón para volver -->

@@ -24,7 +24,7 @@
                         <td>
                             <!-- Formulario para eliminar el producto del carrito -->
                             <form action="/eliminar-del-carrito" method="POST" style="display: inline;">
-                                <input type="hidden" name="productoId" value="{{ item._id }}">
+                                <input type="hidden" name="productoId" value="{{ item.id }}">
                                 <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
                             </form>
                         </td>
