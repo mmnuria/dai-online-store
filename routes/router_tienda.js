@@ -107,17 +107,4 @@ router.post('/eliminar-del-carrito', (req, res) => {
   res.redirect('/carrito');
 });
 
-// Ruta para logout
-router.get('/logout', (req, res) => {
-  // Destruye la sesión, eliminando todos los datos, incluido el carrito
-  req.session.destroy((err) => {
-    if (err) {
-      console.error("Error al cerrar sesión:", err);
-      return res.status(500).send("Error al cerrar sesión");
-    }
-    
-    res.redirect('/home');
-  });
-});
-
 export default router

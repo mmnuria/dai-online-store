@@ -82,9 +82,10 @@ app.use("/", TiendaRouter);
 
 // Las demas rutas con código en el directorio routes
 import Usuarios from "./routes/usuarios.js"
-app.use("/", Usuarios);
+app.use("/usuarios", Usuarios);
 
 const PORT = process.env.PORT || 8000;
+
 app.listen(PORT, () => {
   console.log(`Servidor ejecutandose en  http://localhost:${PORT}`);
 })
