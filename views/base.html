@@ -41,26 +41,42 @@
                 </ul>
                 <!-- Formulario de búsqueda -->
                 <form class="d-flex me-2" action="/buscar" method="GET">
-                    <input class="form-control me-2" type="search" name="q" placeholder="Buscar artículos" aria-label="Search">
+                    <input class="form-control me-2" type="search" name="q" placeholder="Buscar artículos"
+                        aria-label="Search">
                     <button class="btn btn-outline-light" type="submit">Buscar</button>
                 </form>
 
                 <!-- Icono de carrito -->
                 {% if carrito and carrito|length > 0 %}
-                    <a href="/carrito" class="btn btn-outline-light me-2" >
-                        <i class="bi bi-cart"></i>
-                    </a>
+                <a href="/carrito" class="btn btn-outline-light me-2">
+                    <i class="bi bi-cart"></i>
+                </a>
                 {% else %}
-                    <!-- Carrito deshabilitado si está vacío -->
-                    <button class="btn btn-outline-light disabled" type="button">
-                        <i class="bi bi-cart"></i>
-                    </button>
+                <!-- Carrito deshabilitado si está vacío -->
+                <button class="btn btn-outline-light disabled me-2" type="button">
+                    <i class="bi bi-cart"></i>
+                </button>
                 {% endif %}
 
-                <!-- Botón de logout -->
-                <a href="/logout" class="btn btn-outline-light">
-                    <i class="bi bi-box-arrow-right"></i>
-                </a>
+                <!-- Mostrar "Iniciar sesión" solo si el usuario no está autenticado -->
+                {% if not usuario_autenticado %}
+                <form class="d-flex me-2" action="/login" method="GET">
+                    <button class="btn btn-outline-light ms-2" type="submit">
+                        <i class="bi bi-box-arrow-right me-2"></i> 
+                        Iniciar sesión
+                    </button>
+                    
+                </form>
+                {% else %}
+                <!-- Mostrar "Logout" solo si el usuario está autenticado -->
+                <form class="d-flex me-2" action="/logout" method="GET">
+                    <button class="d-none d-md-inline ms-2" type="submit">
+                        <i class="bi bi-box-arrow-right me-2"></i> 
+                        Cerrar sesión
+                    </button>
+                    
+                </form>
+                {% endif %}
                 </form>
             </div>
         </div>
