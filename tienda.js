@@ -40,24 +40,18 @@ const autentificación = (req, res, next) => {
 		try {
 			const data = jwt.verify(token, process.env.SECRET_KEY);
 			req.username = data.usuario;  // Guarda el usuario en el request
-			res.locals.usuario_autenticado = true; // Variable para las plantillas
-			res.locals.username = data.usuario; // Variable de nombre de usuario
+			res.locals.usuario_autenticado = true;
+			res.locals.usuario_admin = data.admin || false;
+
 		} catch (err) {
 			console.error("Token no válido", err);
 			res.locals.usuario_autenticado = false;
+			res.locals.usuario_admin = false;
+
 		}
-	} else {
-		res.locals.usuario_autenticado = false; // Usuario no autenticado
-	}
-  //console.log('Autenticación:', res.locals.usuario_autenticado); // Verificar si pasa correctamente por aquí
-	next()
+	}next()
 }
 app.use(autentificación)
-
-//middleware de bienvenida con nombre del usuario
-app.get("/bienvenida", (req, res) => {
-	res.send(`Bienvenido, ${req.username}`);
-});
 
 // Middleware para inicializar el carrito si no existe
 app.use((req, res, next) => {
@@ -80,11 +74,10 @@ app.get("/hola", (req, res) => {
 });
 
 // Las demas rutas con código en el directorio routes
-import TiendaRouter from "./routes/router_tienda.js"
 app.use("/", TiendaRouter);
 
 // Las demas rutas con código en el directorio routes
-import Usuarios from "./routes/usuarios.js"
+
 app.use("/usuarios", Usuarios);
 
 const PORT = process.env.PORT || 8000;
