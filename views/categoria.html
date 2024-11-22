@@ -14,7 +14,11 @@
                             <h5 class="card-title">{{ producto.title }}</h5>
                             <p class="card-text text-truncate" style="max-width: 250px;">{{ producto.description }}</p>
                             <p class="card-text font-weight-bold">{{ producto.price }}€</p>
-                            <a href="/producto/{{ producto._id }}" class="btn btn-primary">Ver detalles</a>
+                            {% if usuario_admin %}
+                                <a href="/producto/editar/{{ producto._id }}" class="btn btn-warning">Editar</a>
+                            {% else %}
+                                <a href="/producto/{{ producto._id }}" class="btn btn-primary">Ver detalles</a>
+                            {% endif %}
                         </div>
                     </div>
                 </div>

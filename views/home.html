@@ -10,7 +10,12 @@
                     <h5 class="card-title">{{joya.title}}</h5>
                     <p class="card-text text-truncate" style="max-width: 250px;">{{joya.description}}</p>
                     <p class="card-text">{{joya.price}}€</p>
-                    <a href="/producto/{{ joya._id }}" class="btn btn-primary">Ver detalles</a>
+                    {% if usuario_admin %}
+                        <a href="/producto/editar/{{ joya._id }}" class="btn btn-warning">Editar</a>
+                    {% else %}
+                        <a href="/producto/{{ joya._id }}" class="btn btn-primary">Ver detalles</a>
+                    {% endif %}
+
                 </div>
             </div>
         </div>
@@ -21,7 +26,11 @@
                     <h5 class="card-title">{{electronica.title}}</h5>
                     <p class="card-text text-truncate" style="max-width: 250px;">{{electronica.description}}</p>
                     <p class="card-text">{{electronica.price}}€</p>
-                    <a href="/producto/{{ electronica._id }}" class="btn btn-primary">Ver detalles</a>
+                    {% if usuario_admin %}
+                        <a href="/producto/editar/{{ electronica._id }}" class="btn btn-warning">Editar</a>
+                    {% else %}
+                        <a href="/producto/{{ electronica._id }}" class="btn btn-primary">Ver detalles</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -32,7 +41,11 @@
                     <h5 class="card-title">{{ropaMujer.title}}</h5>
                     <p class="card-text text-truncate" style="max-width: 250px;" >{{ropaMujer.description}}</p>
                     <p class="card-text">{{ropaMujer.price}}€</p>
-                    <a href="/producto/{{ ropaMujer._id }}" class="btn btn-primary">Ver detalles</a>
+                    {% if usuario_admin %}
+                        <a href="/producto/editar/{{ ropaMujer._id }}" class="btn btn-warning">Editar</a>
+                    {% else %}
+                        <a href="/producto/{{ ropaMujer._id }}" class="btn btn-primary">Ver detalles</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
@@ -43,7 +56,11 @@
                     <h5 class="card-title">{{ropaHombre.title}}</h5>
                     <p class="card-text text-truncate" style="max-width: 250px;">{{ropaHombre.description}}</p>
                     <p class="card-text">{{ropaHombre.price}}€</p>
-                    <a href="/producto/{{ ropaHombre._id }}" class="btn btn-primary">Ver detalles</a>
+                    {% if usuario_admin %}
+                        <a href="/producto/editar/{{ ropaHombre._id }}" class="btn btn-warning">Editar</a>
+                    {% else %}
+                        <a href="/producto/{{ ropaHombre._id }}" class="btn btn-primary">Ver detalles</a>
+                    {% endif %}
                 </div>
             </div>
         </div>
