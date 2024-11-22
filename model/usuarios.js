@@ -13,7 +13,7 @@ const UserSchema = new mongoose.Schema({
         zipcode: { type: String }
     },
     id: { type: Number, unique: true },
-    admin: { type: Boolean, default: false },
+    admin: { type: Boolean, default: false, required: false },
     email: { type: String, unique: true, required: true },
     username: { type: String, unique: true, required: true },
     password: { type: String, required: true },
