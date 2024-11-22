@@ -9,14 +9,10 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Función para buscar el usuario en la base de datos
-async function obtenerUsuario(username) {
-    console.log(usuario);
-    return await usuario.findOne({ username });
-    
+function obtenerUsuario(username) {
+    return usuario.findOne({ username }); 
 }
 
-// Para mostrar formulario de login
 router.get('/login', (req, res) => {
     // Si ya está autenticado, redirige a la página de bienvenida o a una página principal
     if (req.cookies.access_token) {
@@ -26,7 +22,41 @@ router.get('/login', (req, res) => {
     res.render('login.html');
 })
 
-// Para recoger datos del formulario de login 
+router.post('/', async (req, res) => {
+    console.log('Registrando usuario', { usuario: req.body.username, password: req.body.password.trim() });
+
+    const passwordHash = await bcrypt.hash(req.body.password.trim(), 10);
+
+    try {
+        await usuario.create({
+            id: Math.trunc(Math.random() * 10000000),
+            admin: false,
+            ...req.body,
+            password: passwordHash
+        });
+
+        const token = jwt.sign({usuario:usuario.username, admin:usuario.admin}, process.env.SECRET_KEY, { expiresIn: '1h' })
+        
+        // Si el usuario seleccionó "Recordarme", extender la duración de la cookie
+        const cookieOptions = {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === 'production',
+            // expires: remember ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) : undefined // 30 días si "Recordarme"
+        };
+
+        res.cookie('access_token', token, cookieOptions);
+
+        return res.render('bienvenida.html', { usuario: req.body.username, usuario_autenticado: true });
+    } catch (err) {
+        console.log('Error en el registro', err);
+        res.status(500).send('Error en el registro');
+    } 
+})
+
+router.get('/registro', (req, res) => {
+    res.render('registro.html');
+})  
+
 router.post('/login', async (req, res) => {
     const { username, password } = req.body;
     if (!username || !password) {
