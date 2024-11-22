@@ -106,5 +106,31 @@ router.post('/eliminar-del-carrito', (req, res) => {
 
   res.redirect('/carrito');
 });
+router.get('/producto/editar/:id', async (req, res) => {
+  try {
+      const producto = await Productos.findById(req.params.id);
+      res.render('editar_producto.html', { producto });
+  } catch (error) {
+      console.error('Error al cargar el producto:', error);
+      res.status(500).send('Error al cargar el producto');
+  }
+});
+
+router.post('/producto/editar/:id', async (req, res) => {
+  const { title, price } = req.body;
+  try {
+      await Productos.findByIdAndUpdate(req.params.id, { title, price }, {
+        new: true,
+        runValidators: true
+      });
+      res.redirect('/home');
+  } catch (error) {
+    if (error.message && error.message.includes('mayúscula')) {
+      return res.status(400).send(error.message);
+    }
+    console.error('Error al actualizar el producto:', error);
+    res.status(500).send('Error al actualizar el producto');
+  } 
+});
 
 export default router
