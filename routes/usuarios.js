@@ -68,17 +68,15 @@ router.post('/login', async (req, res) => {
         const usuario = await obtenerUsuario(username); // Función para obtener el usuario desde la DB
 
         if (!usuario) {
-            // Si el usuario no existe
             return res.status(401).send("Usuario no encontrado");
         }
 
-        if (password !== usuario.password) {
-            // Si la contraseña no es correcta
+        const correctPass = password === usuario.password || await bcrypt.compare(password.trim(), usuario.password);
+
+        if (!correctPass) {
             return res.status(401).send("Contraseña incorrecta");
         }
-
-        // Si las credenciales son correctas
-        const token = jwt.sign({ usuario: username }, process.env.SECRET_KEY, { expiresIn: '1h' });
+        const token = jwt.sign({usuario:usuario.username, admin:usuario.admin}, process.env.SECRET_KEY, { expiresIn: '1h' })
         
         // Si el usuario seleccionó "Recordarme", extender la duración de la cookie
         const cookieOptions = {
@@ -90,7 +88,7 @@ router.post('/login', async (req, res) => {
         res.cookie('access_token', token, cookieOptions);
 
         // Redirigir al usuario a la página de bienvenida
-        return res.render('bienvenida.html', { usuario: username });
+        return res.render('bienvenida.html', { usuario: username, usuario_autenticado: true });
         
     } catch (error) {
         console.error("Error en autenticación:", error);
@@ -118,5 +116,6 @@ router.get('/', (req, res) => {
         res.render('home.html', { usuario: null });
     }
 });
+
 
 export default router
