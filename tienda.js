@@ -5,6 +5,9 @@ import cookieParser from "cookie-parser"
 import jwt from "jsonwebtoken"
       
 import connectDB from "./model/db.js"
+import Usuarios from "./routes/usuarios.js"
+import TiendaRouter from "./routes/router_tienda.js"
+
 connectDB()
 
 const app = express()
