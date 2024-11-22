@@ -106,6 +106,15 @@ router.post('/eliminar-del-carrito', (req, res) => {
 
   res.redirect('/carrito');
 });
+
+router.get('/logout', (req, res) => {
+  // Elimina la cookie 'access_token'
+  res.clearCookie('access_token');
+
+  // Redirige a la página de inicio de sesión
+  res.render('logout.html', { usuario_autenticado: false, carrito: [] });
+});
+
 router.get('/producto/editar/:id', async (req, res) => {
   try {
       const producto = await Productos.findById(req.params.id);

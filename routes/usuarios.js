@@ -70,14 +70,6 @@ router.post('/login', async (req, res) => {
 
 });
 
-router.get('/logout', (req, res) => {
-    // Elimina la cookie 'access_token'
-    res.clearCookie('access_token');
-
-    // Redirige a la página de inicio de sesión
-    res.redirect('/login');
-});
-
 router.get('/', (req, res) => {
     // Verificar si el usuario tiene un token de autenticación
     const token = req.cookies.access_token;
