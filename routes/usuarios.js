@@ -68,13 +68,13 @@ router.post('/login', async (req, res) => {
         const usuario = await obtenerUsuario(username); // Función para obtener el usuario desde la DB
 
         if (!usuario) {
-            return res.status(401).send("Usuario no encontrado");
+            return res.status(401).render('login.html', {error: "Usuario no encontrado"});
         }
 
         const correctPass = password === usuario.password || await bcrypt.compare(password.trim(), usuario.password);
 
         if (!correctPass) {
-            return res.status(401).send("Contraseña incorrecta");
+            return res.status(401).render('login.html', {error: "Contraseña incorrecta"});
         }
         const token = jwt.sign({usuario:usuario.username, admin:usuario.admin}, process.env.SECRET_KEY, { expiresIn: '1h' })
         
@@ -92,8 +92,7 @@ router.post('/login', async (req, res) => {
         
     } catch (error) {
         console.error("Error en autenticación:", error);
-        res.status(500).send("Error del servidor");
-        
+        res.status(500).render('login.html', {error});
     }
 
 });

@@ -16,6 +16,11 @@
                 <input type="checkbox" class="form-check-input" id="remember" name="remember">
                 <label class="form-check-label" for="remember">Recordarme</label>
             </div>
+            {% if error %}
+            <div class="mb-3">
+                <spam class="text-danger"> {{ error }}</spam>
+            </div>
+            {% endif %}
             <div class="d-grid">
                 <button type="submit" class="btn btn-primary">Ingresar</button>
             </div>
