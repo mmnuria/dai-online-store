@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="container text-center">
+    <div class="card shadow-lg p-5" style="max-width: 500px; margin: auto;">
+        <div class="card-body">
+            <h1 class="display-4 text-primary">¡Hasta luego!</h1>
+            <p class="lead">Tu sesión ha sido cerrada correctamente.</p>
+            <hr class="my-4">
+            <p>Gracias por visitarnos. Esperamos verte pronto.</p>
+            <div class="mt-4">
+                <a href="/home" class="btn btn-primary me-2">
+                    <i class="bi bi-house-door"></i> Volver al inicio
+                </a>
+                <a href="/usuarios/login" class="btn btn-outline-secondary">
+                    <i class="bi bi-box-arrow-in-right"></i> Iniciar sesión
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
