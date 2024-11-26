@@ -1,0 +1,19 @@
+# Obtener todos los ratings
+GET http://localhost:8000/api/ratings/
+
+###
+# Obtener todos los ratings
+GET http://localhost:8000/api/ratings?desde=0&hasta=5
+
+###
+# Obtener un rating específico
+GET http://localhost:8000/api/ratings/6745bc20bfee9e5be215efbb
+
+# Modificar un rating
+###
+PUT http://localhost:8000/api/ratings/6745bc20bfee9e5be215efbb
+content-type: application/json
+
+{
+  "newRate": 4.5
+}
