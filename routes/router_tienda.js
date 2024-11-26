@@ -4,14 +4,45 @@ const router = express.Router();
 
 router.get('/home', async (req, res) => {
   try {
-    // Obtener productos destacados
+    const joya = await Productos.aggregate([
+      { $match: { category: "jewelery" } },
+      {$addFields: {
+        ratingPromedio: "$rating.rate" // Usa directamente el campo "rating.rate"
+      }
+      }
+    ]);
 
-    const joya = await Productos.findOne({ category: "jewelery" }).lean();
-    const electronica = await Productos.findOne({ category: "electronics" }).lean();
-    const ropaMujer = await Productos.findOne({ category: "women's clothing" }).lean();
-    const ropaHombre = await Productos.findOne({ category: "men's clothing" }).lean();
+    const electronica = await Productos.aggregate([
+      { $match: { category: "electronics" } },
+      {$addFields: {
+        ratingPromedio: "$rating.rate" // Usa directamente el campo "rating.rate"
+      }
+      }
+    ]);
 
-    res.render('home.html', { joya, electronica, ropaMujer, ropaHombre });
+    const ropaMujer = await Productos.aggregate([
+      { $match: { category: "women's clothing" } },
+      {$addFields: {
+        ratingPromedio: "$rating.rate" // Usa directamente el campo "rating.rate"
+      }
+      }
+    ]);
+
+    const ropaHombre = await Productos.aggregate([
+      { $match: { category: "men's clothing" } },
+      {$addFields: {
+        ratingPromedio: "$rating.rate" // Usa directamente el campo "rating.rate"
+      }
+      }
+    ]);
+
+    // Renderizar la vista principal con los productos destacados y sus ratings promedio
+    res.render('home.html', { 
+      joya: joya[0], 
+      electronica: electronica[0], 
+      ropaMujer: ropaMujer[0], 
+      ropaHombre: ropaHombre[0] 
+    });
   } catch (error) {
     console.error('Error al obtener los productos:', error);
     res.status(500).send('Error del servidor');
@@ -40,28 +71,41 @@ router.get('/buscar', async (req, res) => {
   }
 });
 
-// Ruta de detalle del producto
-router.get('/producto/:id', async (req, res) => {
+// GET /producto/:id - Obtener detalles de un producto por ID
+router.get("/producto/:id", async (req, res) => {
   try {
-      const producto = await Productos.findById(req.params.id);
-      res.render('detalle-producto.html', { producto });
+    const producto = await Productos.findById(req.params.id).lean(); // Obtiene el producto con su ID
+    if (!producto) {
+      return res.status(404).send("Producto no encontrado");
+    }
+    // Renderizar la vista del detalle del producto
+    res.render("detalle-producto.html", { producto });
   } catch (error) {
-      console.error('Error al obtener el producto:', error);
-      res.status(500).send('Error del servidor');
+    console.error("Error al obtener el producto:", error);
+    res.status(500).send("Error del servidor");
   }
 });
 
-// Ruta para obtener productos por categoría
+// Ruta de detalle del producto
 router.get('/categoria/:nombre', async (req, res) => {
   try {
-      const nombreCategoria = req.params.nombre;
-      const productos = await Productos.find({ category: nombreCategoria });
-      res.render('categoria.html', { productos, nombreCategoria });
+    const nombreCategoria = req.params.nombre;
+
+    const productos = await Productos.aggregate([
+      { $match: { category: nombreCategoria } },
+      {$addFields: {
+        ratingPromedio: "$rating.rate" // Usa directamente el campo "rating.rate"
+      }
+      }
+    ]);
+
+    res.render('categoria.html', { productos, nombreCategoria });
   } catch (error) {
-      console.error('Error al obtener productos por categoría:', error);
-      res.status(500).send('Error del servidor');
+    console.error('Error al obtener productos por categoría:', error);
+    res.status(500).send('Error del servidor');
   }
 });
+
 
 // Ruta para añadir al carrito
 router.post('/anadir-al-carrito', async (req, res) => {
