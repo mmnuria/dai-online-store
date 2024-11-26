@@ -1,4 +1,5 @@
 import express   from "express"
+import dotenv from "dotenv";
 import nunjucks  from "nunjucks"
 import session from "express-session"
 import cookieParser from "cookie-parser"
@@ -7,7 +8,9 @@ import jwt from "jsonwebtoken"
 import connectDB from "./model/db.js"
 import Usuarios from "./routes/usuarios.js"
 import TiendaRouter from "./routes/router_tienda.js"
+import RatingsRouter from "./routes/router_rating.js";
 
+dotenv.config();
 connectDB()
 
 const app = express()
@@ -24,6 +27,7 @@ app.set('view engine', 'html')
 
 app.use(express.static('public'))     // directorio public para archivos
 app.use(express.urlencoded({ extended: true }));
+app.use(express.json())
 
 app.use(session({
 	secret: 'my-secret',      // a secret string used to sign the session ID cookie
@@ -79,6 +83,8 @@ app.use("/", TiendaRouter);
 // Las demas rutas con código en el directorio routes
 
 app.use("/usuarios", Usuarios);
+
+app.use("/api/ratings", RatingsRouter);
 
 const PORT = process.env.PORT || 8000;
 
