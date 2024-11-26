@@ -14,6 +14,9 @@
                             <h5 class="card-title">{{ producto.title }}</h5>
                             <p class="card-text text-truncate" style="max-width: 250px;">{{ producto.description }}</p>
                             <p class="card-text font-weight-bold">{{ producto.price }}€</p>
+                            <p class="card-text">
+                                <strong>Rating Promedio:</strong> {{ producto.ratingPromedio | default('No tiene ratings') }}
+                            </p>
                             {% if usuario_admin %}
                                 <a href="/producto/editar/{{ producto._id }}" class="btn btn-warning">Editar</a>
                             {% else %}

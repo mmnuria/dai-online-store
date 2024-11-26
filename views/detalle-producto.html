@@ -13,6 +13,14 @@
                 <input type="hidden" name="productoId" value="{{ producto._id }}">
                 <button type="submit" class="btn btn-primary btn-lg">Añadir al carrito</button>
             </form>
+            <h2>Rating del Producto</h3>
+            <p>Rating actual: {{ producto.rating.rate | default('No tiene ratings') }}</p>
+          
+            <form method="POST" action="/api/ratings/{{ producto.ratingId }}">
+              <label for="rating">Actualizar rating (0-5):</label>
+              <input type="number" id="rating" name="rating" min="0" max="5" required>
+              <button type="submit">Actualizar</button>
+            </form>
         </div>
     </div>
     
