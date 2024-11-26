@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main class="container mt-4">
+    <h1 class="mb-4">Gestión de Ratings</h1>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Producto</th>
+                <th>Rating</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for rating in ratings %}
+            <tr>
+                <td>
+                    <a href="/producto/{{ rating.productId }}" class="text-decoration-none">
+                        {{ rating.productTitle }}
+                    </a>
+                </td>
+                <td>{{ rating.rating }}</td>
+                <td>
+                    <form method="POST" action="/api/ratings/{{ rating._id }}" class="d-inline">
+                        <div class="input-group">
+                            <input type="number" name="rating" value="{{ rating.rating }}" min="0" max="5" class="form-control" required>
+                            <button type="submit" class="btn btn-primary">Actualizar</button>
+                        </div>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</main>
+{% endblock %}
