@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block content %}
 <main class="container mt-4">
-    <h1>Productos en la categoría: {{ nombreCategoria }}</h1>
+    <h2>{{ nombreCategoria }} </h2>
     <div class="row mt-4">
         {% if productos.length == 0 %}
             <p class="text-muted">No se encontraron productos en esta categoría.</p>
@@ -15,7 +15,13 @@
                             <p class="card-text text-truncate" style="max-width: 250px;">{{ producto.description }}</p>
                             <p class="card-text font-weight-bold">{{ producto.price }}€</p>
                             <p class="card-text">
-                                <strong>Rating Promedio:</strong> {{ producto.ratingPromedio | default('No tiene ratings') }}
+                                {% if producto.ratingPromedio %}
+                                {% for i in range(1, 6) %}
+                                    <i class="bi bi-star{{ '-fill' if producto.ratingPromedio >= i else '' }}" style="color: #FFD700; font-size: 25px;" ></i>
+                                {% endfor %}
+                                {% else %}
+                                No tiene ratings
+                                {% endif %}
                             </p>
                             {% if usuario_admin %}
                                 <a href="/producto/editar/{{ producto._id }}" class="btn btn-warning">Editar</a>
