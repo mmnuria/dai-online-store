@@ -8,7 +8,8 @@
   "scripts": {
     "seed": "node  --env-file=.env seed.js",
     "indices": "node  --env-file=.env indices.js",
-    "tienda": "node --watch --env-file=.env tienda.js"
+    "tienda": "node --watch --env-file=.env tienda.js",
+    "logger": "node --watch --env-file=.env logger.js"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
@@ -24,7 +25,8 @@
     "mongoose": "^8.8.2",
     "node-fetch": "^2.7.0",
     "nunjucks": "^3.2.4",
-    "path": "^0.12.7"
+    "path": "^0.12.7",
+    "winston": "^3.17.0"
   },
   "devDependencies": {
     "@types/node": "^22.7.5"

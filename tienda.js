@@ -9,6 +9,7 @@ import connectDB from "./model/db.js"
 import Usuarios from "./routes/usuarios.js"
 import TiendaRouter from "./routes/router_tienda.js"
 import RatingsRouter from "./routes/router_rating.js";
+import logger from './logger.js'; 
 
 dotenv.config();
 connectDB()
@@ -16,6 +17,7 @@ connectDB()
 const app = express()
 
 const IN = process.env.IN || 'development'
+
 
 nunjucks.configure('views', {         // directorio 'views' para las plantillas html
 	autoescape: true,
@@ -53,6 +55,7 @@ const autentificación = (req, res, next) => {
 			res.locals.usuario_autenticado = false;
 			res.locals.usuario_admin = false;
 			res.redirect('login.html')
+			logger.error('Autentificación incorrecta');
 
 		}
 	}next()
@@ -61,7 +64,7 @@ app.use(autentificación)
 
 // Middleware para inicializar el carrito si no existe
 app.use((req, res, next) => {
-	//console.log(req.session);
+	
     if (!req.session.carrito) {
         req.session.carrito = [];
     }
