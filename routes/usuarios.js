@@ -2,6 +2,7 @@ import express from "express";
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcrypt' // para comparar contraseñas cifradas
 import usuario from "../model/usuarios.js";
+import logger from '../logger.js'; 
 
 const router = express.Router();
 const app = express();
@@ -11,6 +12,10 @@ app.use(express.urlencoded({ extended: true }));
 
 function obtenerUsuario(username) {
     return usuario.findOne({ username }); 
+}
+
+function obtenerCorreo(email) {
+    return usuario.findOne({ email }); 
 }
 
 router.get('/login', (req, res) => {
@@ -25,9 +30,24 @@ router.get('/login', (req, res) => {
 router.post('/', async (req, res) => {
     console.log('Registrando usuario', { usuario: req.body.username, password: req.body.password.trim() });
 
-    const passwordHash = await bcrypt.hash(req.body.password.trim(), 10);
+    const usuarioExistente = await obtenerUsuario(req.body.username);
+    
+    if (usuarioExistente) {
+        logger.warn('Nombre del usuario en uso');
+        return res.status(500).render('registro.html', { err: 'El nombre de usuario ya está en uso.' });
+    }
+
+    const correoExistente = await obtenerCorreo(req.body.email);
+
+    if (correoExistente) {
+        logger.warn('Correo en uso');
+        return res.status(500).render('registro.html', { err: 'El correo electrónico ya está en uso.' });
+    }
 
     try {
+
+        const passwordHash = await bcrypt.hash(req.body.password.trim(), 10);
+
         await usuario.create({
             id: Math.trunc(Math.random() * 10000000),
             admin: false,
@@ -46,11 +66,12 @@ router.post('/', async (req, res) => {
         };
 
         res.cookie('access_token', token, cookieOptions);
-
+        logger.info('Registro completado');
         return res.render('bienvenida.html', { usuario: req.body.username, usuario_autenticado: true });
     } catch (err) {
         console.log('Error en el registro', err);
-        res.status(500).send('Error en el registro');
+        res.status(500).render('registro.html', {err: 'Hubo un problema al procesar tu solicitud. Intenta de nuevo más tarde.'});
+        logger.error('Error de registro');
     } 
 })
 
@@ -69,12 +90,14 @@ router.post('/login', async (req, res) => {
         const usuario = await obtenerUsuario(username); // Función para obtener el usuario desde la DB
 
         if (!usuario) {
+            logger.error('Usuario no encontrado');
             return res.status(401).render('login.html', {error: "Usuario no encontrado"});
         }
 
         const correctPass = password === usuario.password || await bcrypt.compare(password.trim(), usuario.password);
 
         if (!correctPass) {
+            logger.error('Contraseña incorrecta');
             return res.status(401).render('login.html', {error: "Contraseña incorrecta"});
         }
         const token = jwt.sign({usuario:usuario.username, admin:usuario.admin}, process.env.SECRET_KEY, { expiresIn: '1h' })
@@ -87,13 +110,14 @@ router.post('/login', async (req, res) => {
         };
 
         res.cookie('access_token', token, cookieOptions);
-
+        logger.info('Usuario ha iniciado sesion correctamente');
         // Redirigir al usuario a la página de bienvenida
         return res.render('bienvenida.html', { usuario: username, usuario_autenticado: true });
         
     } catch (error) {
         console.error("Error en autenticación:", error);
         res.status(500).render('login.html', {error});
+        logger.error('Error en autenticación');
     }
 
 });
@@ -106,6 +130,7 @@ router.get('/', (req, res) => {
         // Decodificar el token para obtener los datos del usuario
         jwt.verify(token, process.env.SECRET_KEY, (err, data) => {
             if (err) {
+                logger.error('Sesión expirada');
                 return res.status(401).send('Sesión expirada');
             }
             // Pasar el nombre de usuario al frontend

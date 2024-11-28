@@ -16,6 +16,11 @@
                 <label for="email" class="form-label">Correo</label>
                 <input type="email" class="form-control" id="email" name="email" required>
             </div>
+            {% if err %}
+            <div class="mb-3">
+                <spam class="text-danger"> {{ err }}</spam>
+            </div>
+            {% endif %}
             <div class="d-grid">
                 <button type="submit" class="btn btn-primary">Registrarse</button>
             </div>
