@@ -16,7 +16,7 @@ function obtenerUsuario(username) {
 router.get('/login', (req, res) => {
     // Si ya está autenticado, redirige a la página de bienvenida o a una página principal
     if (req.cookies.access_token) {
-        return res.redirect('/bienvenida');
+        return res.render('bienvenida.html');
     }
     // Si no está autenticado, renderiza el formulario de login
     res.render('login.html');
@@ -41,6 +41,7 @@ router.post('/', async (req, res) => {
         const cookieOptions = {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
+            expiresIn: '1h'
             // expires: remember ? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) : undefined // 30 días si "Recordarme"
         };
 
