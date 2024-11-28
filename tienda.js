@@ -46,11 +46,13 @@ const autentificación = (req, res, next) => {
 			req.username = data.usuario;  // Guarda el usuario en el request
 			res.locals.usuario_autenticado = true;
 			res.locals.usuario_admin = data.admin || false;
+			
 
 		} catch (err) {
 			console.error("Token no válido", err);
 			res.locals.usuario_autenticado = false;
 			res.locals.usuario_admin = false;
+			res.redirect('login.html')
 
 		}
 	}next()
