@@ -7,6 +7,7 @@
   "type": "module",
   "scripts": {
     "seed": "node  --env-file=.env seed.js",
+    "seed-ratings": "node  --env-file=.env seed-ratings.js",
     "indices": "node  --env-file=.env indices.js",
     "tienda": "node --watch --env-file=.env tienda.js",
     "logger": "node --watch --env-file=.env logger.js"

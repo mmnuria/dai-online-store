@@ -1,38 +1,77 @@
 import express from "express";
 import Productos from "../model/productos.js";
+import Ratings from "../model/ratings.js";
+import { ObjectId } from "mongodb";
 const router = express.Router();
+
 
 router.get('/home', async (req, res) => {
   try {
     const joya = await Productos.aggregate([
       { $match: { category: "jewelery" } },
-      {$addFields: {
-        ratingPromedio: "$rating.rate" // Usa directamente el campo "rating.rate"
-      }
+      {
+        $lookup: {
+          from: 'ratings',
+          localField: '_id',
+          foreignField: 'productId',
+          as: 'ratingData'
+        }
+      },
+      {
+        $addFields: {
+          ratingPromedio: { $avg: "$ratingData.rate" } // Calcula el promedio de rating directamente desde la colección ratings
+        }
       }
     ]);
 
     const electronica = await Productos.aggregate([
       { $match: { category: "electronics" } },
-      {$addFields: {
-        ratingPromedio: "$rating.rate" // Usa directamente el campo "rating.rate"
-      }
+      {
+        $lookup: {
+          from: 'ratings',
+          localField: '_id',
+          foreignField: 'productId',
+          as: 'ratingData'
+        }
+      },
+      {
+        $addFields: {
+          ratingPromedio: { $avg: "$ratingData.rate" } // Calcula el promedio de rating directamente desde la colección ratings
+        }
       }
     ]);
 
     const ropaMujer = await Productos.aggregate([
       { $match: { category: "women's clothing" } },
-      {$addFields: {
-        ratingPromedio: "$rating.rate" // Usa directamente el campo "rating.rate"
-      }
+      {
+        $lookup: {
+          from: 'ratings',
+          localField: '_id',
+          foreignField: 'productId',
+          as: 'ratingData'
+        }
+      },
+      {
+        $addFields: {
+          ratingPromedio: { $avg: "$ratingData.rate" } // Calcula el promedio de rating directamente desde la colección ratings
+        }
       }
     ]);
 
     const ropaHombre = await Productos.aggregate([
       { $match: { category: "men's clothing" } },
-      {$addFields: {
-        ratingPromedio: "$rating.rate" // Usa directamente el campo "rating.rate"
-      }
+      {
+        $lookup: {
+          from: 'ratings',
+          localField: '_id',
+          foreignField: 'productId',
+          as: 'ratingData'
+        }
+      },
+      {
+        $addFields: {
+          ratingPromedio: { $avg: "$ratingData.rate" } // Calcula el promedio de rating directamente desde la colección ratings
+        }
       }
     ]);
 
@@ -49,7 +88,6 @@ router.get('/home', async (req, res) => {
   }
 });
 
-// Ruta de búsqueda
 router.get('/buscar', async (req, res) => {
   try {
       const busqueda = req.query.q;
@@ -74,11 +112,48 @@ router.get('/buscar', async (req, res) => {
 // GET /producto/:id - Obtener detalles de un producto por ID
 router.get("/producto/:id", async (req, res) => {
   try {
-    const producto = await Productos.findById(req.params.id).lean(); // Obtiene el producto con su ID
+    const producto = await Productos.findById(req.params.id).lean();
     if (!producto) {
       return res.status(404).send("Producto no encontrado");
     }
-    // Renderizar la vista del detalle del producto
+
+    // Obtener los ratings del producto desde la colección de ratings
+    const ratingsResult = await Ratings.aggregate([
+      { $match: { productId: producto._id } },
+      {
+        $group: {
+          _id: "$productId",
+          promedio: { $avg: "$rate" },
+          totalVotos: { $sum: "$count" },
+        },
+      },
+    ]);
+
+    // Si hay datos en los ratings, actualiza el campo `rating` directamente
+    if (ratingsResult.length > 0) {
+      const rating = ratingsResult[0];
+      producto.rating = {
+        rate: rating.promedio,
+        count: rating.totalVotos,
+      };
+    } else {
+      // Si no hay datos, se asignan valores predeterminados
+      producto.rating = { rate: 0, count: 0 };
+    }
+
+    // Verificar usuario
+    const user = req.username; // Ajustar según tu lógica de usuario
+    if (!user || !user._id) {
+      producto.myRating = -1;
+    } else {
+      const myRating = await Ratings.findOne({
+        productId: producto._id,
+        userId: new ObjectId(user._id),
+      });
+      producto.myRating = myRating ? myRating.rate : -1;
+    }
+
+    // Renderizar vista
     res.render("detalle-producto.html", { producto });
   } catch (error) {
     console.error("Error al obtener el producto:", error);
@@ -86,16 +161,25 @@ router.get("/producto/:id", async (req, res) => {
   }
 });
 
-// Ruta de detalle del producto
 router.get('/categoria/:nombre', async (req, res) => {
   try {
     const nombreCategoria = req.params.nombre;
 
     const productos = await Productos.aggregate([
       { $match: { category: nombreCategoria } },
-      {$addFields: {
-        ratingPromedio: "$rating.rate" // Usa directamente el campo "rating.rate"
-      }
+      {
+        $lookup: {
+          from: 'ratings',
+          localField: '_id',
+          foreignField: 'productId',
+          as: 'ratingData'
+        }
+      },
+      {
+        $addFields: {
+          ratingPromedio: { $avg: "$ratingData.rate" }, // Calcula el promedio de rating directamente desde la colección ratings
+          totalVotos: { $sum: "$ratingData.count" } // Calcula la cantidad total de votos para el producto
+        }
       }
     ]);
 
@@ -105,7 +189,6 @@ router.get('/categoria/:nombre', async (req, res) => {
     res.status(500).send('Error del servidor');
   }
 });
-
 
 // Ruta para añadir al carrito
 router.post('/anadir-al-carrito', async (req, res) => {

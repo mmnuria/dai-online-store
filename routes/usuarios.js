@@ -48,14 +48,14 @@ router.post('/', async (req, res) => {
 
         const passwordHash = await bcrypt.hash(req.body.password.trim(), 10);
 
-        await usuario.create({
+        const user = await usuario.create({
             id: Math.trunc(Math.random() * 10000000),
             admin: false,
             ...req.body,
             password: passwordHash
         });
 
-        const token = jwt.sign({usuario:usuario.username, admin:usuario.admin}, process.env.SECRET_KEY, { expiresIn: '1h' })
+        const token = jwt.sign({ usuario: user, admin:usuario.admin}, process.env.SECRET_KEY, { expiresIn: '1h' })
         
         // Si el usuario seleccionó "Recordarme", extender la duración de la cookie
         const cookieOptions = {
@@ -100,7 +100,7 @@ router.post('/login', async (req, res) => {
             logger.error('Contraseña incorrecta');
             return res.status(401).render('login.html', {error: "Contraseña incorrecta"});
         }
-        const token = jwt.sign({usuario:usuario.username, admin:usuario.admin}, process.env.SECRET_KEY, { expiresIn: '1h' })
+        const token = jwt.sign({ usuario: usuario, admin:usuario.admin}, process.env.SECRET_KEY, { expiresIn: '1h' })
         
         // Si el usuario seleccionó "Recordarme", extender la duración de la cookie
         const cookieOptions = {

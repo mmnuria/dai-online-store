@@ -40,27 +40,57 @@ app.use(session({
 app.use(cookieParser())
 
 // middleware de autentificacion
-const autentificación = (req, res, next) => {
-	const token = req.cookies.access_token;
-	if (token) {
-		try {
-			const data = jwt.verify(token, process.env.SECRET_KEY);
-			req.username = data.usuario;  // Guarda el usuario en el request
-			res.locals.usuario_autenticado = true;
-			res.locals.usuario_admin = data.admin || false;
+// const autentificación = (req, res, next) => {
+// 	const token = req.cookies.access_token;
+// 	if (token) {
+// 		console.log('token', token)
+// 		try {
+// 			const data = jwt.verify(token, process.env.SECRET_KEY);
+// 			req.username = data.usuario;  // Guarda el usuario en el request
+// 			res.locals.usuario_autenticado = true;
+// 			res.locals.usuario_admin = data.admin || false;
 			
 
-		} catch (err) {
-			console.error("Token no válido", err);
-			res.locals.usuario_autenticado = false;
-			res.locals.usuario_admin = false;
-			res.redirect('login.html')
-			logger.error('Autentificación incorrecta');
+// 		} catch (err) {
+// 			console.error("Token no válido", err);
+// 			res.locals.usuario_autenticado = false;
+// 			res.locals.usuario_admin = false;
+// 			res.redirect('login.html')
+// 			logger.error('Autentificación incorrecta');
 
-		}
-	}next()
-}
-app.use(autentificación)
+// 		}
+// 	}next()
+// }
+// app.use(autentificación)
+
+const autentificación = (req, res, next) => {
+  const token = req.cookies.access_token;
+
+  if (!token) {
+    // Usuario no autenticado
+    res.locals.usuario_autenticado = false;
+    res.locals.usuario_admin = false;
+    req.username = null; // Usuario no definido
+    return next(); // Permite continuar a todas las rutas
+  }
+
+  try {
+    // Verificar token si existe
+    const data = jwt.verify(token, process.env.SECRET_KEY);
+    req.username = data.usuario; // Guardar usuario autenticado en `req`
+    res.locals.usuario_autenticado = true;
+    res.locals.usuario_admin = data.admin || false; // Definir si es administrador
+  } catch (err) {
+    console.error("Token no válido:", err);
+    res.locals.usuario_autenticado = false;
+    res.locals.usuario_admin = false;
+    req.username = null; // Usuario no definido
+  }
+
+  next(); // Continuar a todas las rutas
+};
+
+app.use(autentificación);
 
 // Middleware para inicializar el carrito si no existe
 app.use((req, res, next) => {

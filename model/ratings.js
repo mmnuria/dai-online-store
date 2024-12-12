@@ -12,9 +12,15 @@ const RatingSchema = new mongoose.Schema({
     min: 0, 
     max: 5 
   },
-  comment: { 
-    type: String, 
-    required: false // Los comentarios no siempre serán obligatorios
+  count: { 
+    type: Number, 
+    required: true, 
+    default: 0 
+  },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId, 
+    ref: "usuarios", 
+    required: false
   }
 });
 
