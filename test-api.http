@@ -11,7 +11,7 @@ GET http://localhost:8000/api/ratings/6745a97914e4f7b1a68ba920
 
 # Modificar un rating
 ###
-PUT http://localhost:8000/api/ratings/675af210d853fecdf6f1fbe1
+PUT http://localhost:8000/api/ratings/6745a97914e4f7b1a68ba918
 content-type: application/json
 
 {

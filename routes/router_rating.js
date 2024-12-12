@@ -43,27 +43,6 @@ router.get('/:id', async (req, res) => {
 
 
 // // PUT /api/ratings/:id - Modificar un rating por ID
-// router.put("/:id", async (req, res) => {
-//     const { newRate } = req.body;
-  
-//     if (newRate < 1 || newRate > 5) {
-//       return res.status(400).json({ error: "La calificación debe estar entre 1 y 5" });
-//   }  
-  
-//     try {
-//       const existingRating = await Rating.findById({productId: req.params.id});
-//       if (!existingRating) return res.status(404).json({ error: "Rating no encontrado" });
-  
-//       existingRating.rate = newRate;
-  
-//       await existingRating.save();
-//       res.json(existingRating);
-//     } catch (err) {
-//       console.error("Error al modificar el rating:", err);
-//       res.status(500).json({ error: "Error al modificar el rating" });
-//     }
-//   });  
-
 router.put("/:id", async (req, res) => {
   const { newRate } = req.body;
   const productId = req.params.id;
@@ -73,7 +52,7 @@ router.put("/:id", async (req, res) => {
   }  
 
   try {
-    const existingRating = await Rating.findById({_id: productId});
+    const existingRating = await Rating.findOne({ productId: productId });;
     if (!existingRating) return res.status(404).json({ error: "Rating no encontrado" });
 
     existingRating.rate = newRate;

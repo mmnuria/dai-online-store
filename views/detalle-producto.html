@@ -48,7 +48,7 @@
     document.addEventListener('DOMContentLoaded', () => {
       const productId = document.getElementById('product-id').value; // ID del producto
       const starsContainer = document.getElementById('current-rating'); // Contenedor de las estrellas
-      const stars = document.getElementsByClassName("stars")[0];
+      //const stars = document.getElementsByClassName("stars")[0];
       const myStarsContainer = document.getElementById('my-rating');
 
       function renderStars(container, rating, productId, params) {
@@ -116,7 +116,7 @@
           alert('No se pudo actualizar la calificación. Intenta de nuevo.');
         });
       }
-
+      // starsContainer.addEventListener('click', Vota);
       for (const star of stars.children) {
         star.addEventListener('click', Vota);
       } 
