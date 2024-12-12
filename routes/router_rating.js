@@ -1,5 +1,4 @@
 import express from "express";
-import { ObjectId } from 'mongodb';
 import Rating from "../model/ratings.js";
 
 const router = express.Router();
@@ -20,17 +19,6 @@ router.get("/", async (req, res) => {
   });  
 
 // // GET /api/ratings/:id - Obtener un rating por ID
-// router.get("/:id", async (req, res) => {
-//     try {
-//       const rating = await Rating.findById(req.params.id);
-//       if (!rating) return res.status(404).json({ error: "Rating no encontrado" });
-  
-//       res.json(rating);
-//     } catch (err) {
-//       console.error("Error al obtener el rating:", err);
-//       res.status(500).json({ error: "Error al obtener el rating" });
-//     }
-//   });  
 router.get('/:id', async (req, res) => {
   try {
       const ratingData = await Rating.find({ productId: req.params.id }); // Supongamos que 'Rating' es tu modelo
@@ -99,8 +87,5 @@ router.post('/api/ratings/:productId/review', async (req, res) => {
     res.status(500).json({ message: 'Error al agregar la reseña.' });
   }
 });
-
-
-
 
 export default router;
