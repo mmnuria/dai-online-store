@@ -41,7 +41,10 @@ router.put("/:id", async (req, res) => {
   }  
 
   try {
-    let existingRating = await Rating.findOne({ productId: new ObjectId(productId) });
+    let existingRating = await Rating.findOne({ 
+      productId: new ObjectId(productId),
+      userId: new ObjectId(req.username._id)
+    });
     if (existingRating) {
       existingRating.rate = newRate;
 

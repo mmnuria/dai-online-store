@@ -98,7 +98,7 @@
       function Vota(evt) {
         console.log('evt', evt);
         const productId = evt.target.dataset.id;
-        const newRating = evt.target.dataset.star;
+        const newRating = parseFloat(evt.target.dataset.star);
         const oldRating = parseFloat(document.getElementById('product-rate').value);
         const oldCount = parseFloat(document.getElementById('product-count').value);
         const myRating = parseFloat(document.getElementById('product-my-rating').value);
@@ -113,7 +113,7 @@
         renderStars(starsContainer, newExpectedRating, productId, {
           newCount,
         });
-        renderStars(myStarsContainer, newExpectedRating, productId, {
+        renderStars(myStarsContainer, newRating, productId, {
           newCount,
         });
 
