@@ -124,7 +124,7 @@ router.get("/producto/:id", async (req, res) => {
         $group: {
           _id: "$productId",
           promedio: { $avg: "$rate" },
-          totalVotos: { $sum: "$count" },
+          totalVotos: { $sum: 1 },
         },
       },
     ]);
@@ -137,7 +137,6 @@ router.get("/producto/:id", async (req, res) => {
         count: rating.totalVotos,
       };
     } else {
-      // Si no hay datos, se asignan valores predeterminados
       producto.rating = { rate: 0, count: 0 };
     }
 
@@ -152,6 +151,8 @@ router.get("/producto/:id", async (req, res) => {
       });
       producto.myRating = myRating ? myRating.rate : -1;
     }
+
+    console.log('producto', producto);
 
     // Renderizar vista
     res.render("detalle-producto.html", { producto });

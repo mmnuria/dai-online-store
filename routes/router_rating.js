@@ -40,7 +40,7 @@ router.put("/:id", async (req, res) => {
   }  
 
   try {
-    const existingRating = await Rating.findOne({ productId: productId });;
+    const existingRating = await Rating.findOne({ productId: productId });
     if (!existingRating) return res.status(404).json({ error: "Rating no encontrado" });
 
     existingRating.rate = newRate;

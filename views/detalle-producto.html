@@ -9,8 +9,28 @@
       <h1>{{ producto.title }}</h1>
       <p>{{ producto.description }}</p>
       <p class="lead" style="font-size: 25px;"><strong>{{ producto.price }}€</strong></p>
-      
-      <!-- Mostrar la valoración media -->
+      <!-- <p>
+                {% if producto.rating.rate %}
+                  {% for i in range(1, 6) %}
+                    <i class="bi bi-star{{ '-fill' if producto.rating.rate >= i else '' }}" style="color: #FFD700; font-size: 25px;" ></i>
+                  {% endfor %}
+                {% else %}
+                  No tiene ratings
+                {% endif %}
+              </p>  -->
+
+      <!-- Input oculto con el ID del producto -->
+      <input type="hidden" id="product-id" value="{{ producto._id }}">
+      <!-- Input oculto con el conteo de votos actual -->
+      <input type="hidden" id="product-count" value="{{ producto.rating.count }}">
+      <!-- Input oculto con el rate actual -->
+      <input type="hidden" id="product-rate" value="{{ producto.rating.rate }}">
+      {% if producto.myRating %}
+      <!-- Input oculto con mi rating -->
+      <input type="hidden" id="product-my-rating" value="{{ producto.myRating }}">
+      {% endif %}
+
+      <!-- Aquí se mostrarán las estrellas del rating actual -->
       <p id="current-rating">
         {% if producto.rating.rate %}
         {% for i in range(1, 6) %}
@@ -23,10 +43,7 @@
         {% endif %}
       </p>
 
-      <!-- Input oculto con el ID del producto -->
-      <input type="hidden" id="product-id" value="{{ producto._id }}">
-
-      <!-- Aquí se mostrarán las estrellas de mi rating (si el usuario está logueado) -->
+      <!-- Aquí se mostrarán las estrellas de mi rating -->
       {% if usuario_autenticado %}
       <p id="my-rating" class="stars">
         <span> Mi rating: </span>
@@ -48,22 +65,28 @@
     document.addEventListener('DOMContentLoaded', () => {
       const productId = document.getElementById('product-id').value; // ID del producto
       const starsContainer = document.getElementById('current-rating'); // Contenedor de las estrellas
-      //const stars = document.getElementsByClassName("stars")[0];
+      const stars = document.getElementsByClassName("stars")[0];
       const myStarsContainer = document.getElementById('my-rating');
 
+      console.log({
+        productId,
+        starsContainer,
+        stars, myStarsContainer
+      })
+
       function renderStars(container, rating, productId, params) {
-        let starsHtml = container.id === 'my-rating' ? `<span> Mi rating: </span>` : '';
+        let starsHtml = container.id === 'my-rating' ? "<span> Mi rating: </span>" : '';
         for (let i = 1; i <= 5; i++) {
-          starsHtml += `
-                <i class="bi bi-star${i <= rating ? '-fill' : ''}" 
-                   style="color: #FFD700; font-size: 25px; cursor: pointer;" 
-                   data-star="${i}" 
-                   data-id="${productId}">
-                </i>`;
+          starsHtml +=
+          `<i class="bi bi-star${i <= rating ? '-fill' : ''}"
+              style="color: #FFD700; font-size: 25px; cursor: pointer;"
+              data-star="${i}"
+              data-id="${productId}">
+            </i>`;
         }
-        starsHtml += container.id === 'current-rating' ? `
-         <span> (${ params.newCount }) </span>
-        ` : '';
+        starsHtml += container.id === 'current-rating' ?
+        `<span> (${params.newCount}) </span>`
+          : '';
         container.innerHTML = starsHtml;
         if (container.id === 'my-rating') {
           container.querySelectorAll('i').forEach(star => {
@@ -84,8 +107,8 @@
         if (myRating === -1) {
           // primera vez que voto
           newCount++;
-        } 
-        newExpectedRating = ((oldRating * oldCount) - Math.max(myRating,0) + newRating)/newCount;
+        }
+        newExpectedRating = ((oldRating  * oldCount) - Math.max(myRating, 0) + newRating) / newCount;
 
         renderStars(starsContainer, newExpectedRating, productId, {
           newCount,
@@ -96,31 +119,34 @@
 
         fetch(`/api/ratings/${productId}`, {
           method: 'PUT',
-          headers: { 
+          headers: {
             'Content-Type': 'application/json',
-            'Authorization': 'Bearer ' 
+            'Authorization': 'Bearer '
           },
           body: JSON.stringify({ newRate: newRating }),
         })
-        .then((data) => {
-          console.log('Calificación actualizada:', data);
-        })
-        .catch((err) => {
-          console.error('Error al actualizar la calificación:', err);
-          renderStars(starsContainer, oldRating, productId, {
-            newCount: oldCount,
+          .then((data) => {
+            console.log('Calificación actualizada:', data);
+          })
+          .catch((err) => {
+            console.error('Error al actualizar la calificación:', err);
+            renderStars(starsContainer, oldRating, productId, {
+              newCount: oldCount,
+            });
+            renderStars(myStarsContainer, oldRating, productId, {
+              newCount: oldCount,
+            });
+            alert('No se pudo actualizar la calificación. Intenta de nuevo.');
           });
-          renderStars(myStarsContainer, oldRating, productId, {
-            newCount: oldCount,
-          });
-          alert('No se pudo actualizar la calificación. Intenta de nuevo.');
-        });
       }
-      // starsContainer.addEventListener('click', Vota);
+
       for (const star of stars.children) {
         star.addEventListener('click', Vota);
-      } 
+      }
     });
+
+
   </script>
+
 </main>
 {% endblock %}
