@@ -126,7 +126,14 @@
           body: JSON.stringify({ newRate: newRating }),
         })
           .then((data) => {
-            console.log('Calificación actualizada:', data);
+            if (!data.ok) {
+              throw new Error(`Petición fallida: codigo ${data.status}`)
+            } 
+
+            return data.json();
+          })
+          .then((response) => {
+            console.log('Calificación actualizada:', response);
           })
           .catch((err) => {
             console.error('Error al actualizar la calificación:', err);
